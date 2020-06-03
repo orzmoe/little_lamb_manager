@@ -75,6 +75,11 @@
                     {{ scope.row.money/100 }}
                 </template>
             </el-table-column>
+            <el-table-column label="支付方式" width="110" align="center">
+                <template slot-scope="scope">
+                    {{ scope.row.pay_type }}
+                </template>
+            </el-table-column>
             <!--<el-table-column class-name="status-col" label="Status" width="110" align="center">
                 <template slot-scope="scope">
                     <el-tag :type="scope.row.status | statusFilter">{{ scope.row.status }}</el-tag>
@@ -87,6 +92,16 @@
                 </template>
             </el-table-column>
         </el-table>
+        <el-divider></el-divider>
+        <el-pagination
+                background
+                @current-change="pageChange"
+                layout="prev, pager, next"
+                :page-size="pages.pageSize"
+                :current-page="pages.page"
+                :total="pages.total">
+        </el-pagination>
+        <el-divider></el-divider>
     </div>
 </template>
 
@@ -118,10 +133,16 @@
       this.fetchData()
     },
     methods: {
+      pageChange(page){
+        this.pages.page = page
+        this.fetchData()
+      },
       fetchData() {
         this.listLoading = true
         getList(this.pages).then(response => {
           this.list = response.data.data
+          this.pages.total = response.data.total
+          this.pages.page = response.data.current_page
           this.listLoading = false
         })
       }
